@@ -38,18 +38,32 @@ def main(interval_seconds):
         try:
             # Retrieve data from Fronius API
             froniusData = get_froniusData(froniusIp, "/solar_api/v1/GetPowerFlowRealtimeData.fcgi")
-            pvLoad = froniusData['Body']['Data']['Site'].get('P_Load', 0)
-            pvGeneration = froniusData['Body']['Data']['Site'].get('P_PV', 0)
-            pvGrid = froniusData['Body']['Data']['Site'].get('P_Grid', 0)
+            pvLoad = froniusData['Body']['Data']['Site'].get('P_Load')
+            pvGeneration = froniusData['Body']['Data']['Site'].get('P_PV')
+            pvGrid = froniusData['Body']['Data']['Site'].get('P_Grid')
+
+            # Check for None values and assign default if necessary
+            pvLoad = pvLoad if pvLoad is not None else 0
+            pvGeneration = pvGeneration if pvGeneration is not None else 0
+            pvGrid = pvGrid if pvGrid is not None else 0
 
             froniusData_common = get_froniusData(froniusIp, "/solar_api/v1/GetInverterRealtimeData.cgi?Scope=Device&DeviceId=1&DataCollection=CommonInverterData")
-            pvGridVoltage = froniusData_common['Body']['Data'].get('UAC', {}).get('Value', 0)
-            pvGridFrequency = froniusData_common['Body']['Data'].get('FAC', {}).get('Value', 0)
+            pvGridVoltage = froniusData_common['Body']['Data'].get('UAC', {}).get('Value')
+            pvGridFrequency = froniusData_common['Body']['Data'].get('FAC', {}).get('Value')
+
+            # Check for None values and assign default if necessary
+            pvGridVoltage = pvGridVoltage if pvGridVoltage is not None else 0
+            pvGridFrequency = pvGridFrequency if pvGridFrequency is not None else 0
 
             froniusData_meter = get_froniusData(froniusIp, "/solar_api/v1/GetMeterRealtimeData.cgi?Scope=Device&DeviceId=0")
-            pvMeterGridVoltage = froniusData_meter['Body']['Data'].get('Voltage_AC_Phase_1', 0)
-            pvMeterGridFrequency = froniusData_meter['Body']['Data'].get('Frequency_Phase_Average', 0)
-            pvMeterGridPf = froniusData_meter['Body']['Data'].get('PowerFactor_Phase_1', 0)
+            pvMeterGridVoltage = froniusData_meter['Body']['Data'].get('Voltage_AC_Phase_1')
+            pvMeterGridFrequency = froniusData_meter['Body']['Data'].get('Frequency_Phase_Average')
+            pvMeterGridPf = froniusData_meter['Body']['Data'].get('PowerFactor_Phase_1')
+
+            # Check for None values and assign default if necessary
+            pvMeterGridVoltage = pvMeterGridVoltage if pvMeterGridVoltage is not None else 0
+            pvMeterGridFrequency = pvMeterGridFrequency if pvMeterGridFrequency is not None else 0
+            pvMeterGridPf = pvMeterGridPf if pvMeterGridPf is not None else 0
 
             # Check if both pvGeneration and pvLoad are valid
             if pvGeneration is not None and pvLoad is not None:
