@@ -22,7 +22,7 @@ froniusIp = "fronius.home.arpa"
 # MQTT Broker details
 broker_address = "nas.home.arpa"
 broker_port = 1883
-mqtt_topic = "test/fronius"
+mqtt_topic = "home/fronius"
 
 def get_froniusData(ip, endpoint):
     url = f"http://{ip}{endpoint}"
