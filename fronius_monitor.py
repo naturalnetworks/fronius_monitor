@@ -44,7 +44,7 @@ def main(interval_seconds):
 
             # Check for None values and assign default if necessary
             pvLoad = pvLoad if pvLoad is not None else 0
-            pvGeneration = pvGeneration if pvGeneration is not None else 0
+            pvGeneration = pvGeneration if pvGeneration is not None and pvGeneration != 'null' else 0
             pvGrid = pvGrid if pvGrid is not None else 0
 
             froniusData_common = get_froniusData(froniusIp, "/solar_api/v1/GetInverterRealtimeData.cgi?Scope=Device&DeviceId=1&DataCollection=CommonInverterData")
