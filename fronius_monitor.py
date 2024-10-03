@@ -21,7 +21,7 @@ import paho.mqtt.client as mqtt
 import sdnotify
 
 # Initialize sdnotify
-notifier = sdnotify.Notifier()
+notifier = sdnotify.SystemdNotifier()
 
 # Fronius IP address
 froniusIp = "fronius.home.arpa"
