@@ -6,6 +6,8 @@ Poll Fronius Data Manager REST API for telemetry data and publish it to MQTT bro
 Dependencies:
     - Paho MQTT client library (https://pypi.org/project/paho-mqtt/)
     - requests library (https://pypi.org/project/requests/)
+    - sdnotify (https://pypi.org/project/sdnotify/)
+
 
 Author: Ben Johns (bjohns@naturalnetworks.net)
 """
@@ -15,6 +17,11 @@ import json
 import traceback
 import requests
 import paho.mqtt.client as mqtt
+
+import sdnotify
+
+# Initialize sdnotify
+notifier = sdnotify.Notifier()
 
 # Fronius IP address
 froniusIp = "fronius.home.arpa"
@@ -65,13 +72,15 @@ def main(interval_seconds):
             pvMeterGridFrequency = pvMeterGridFrequency if pvMeterGridFrequency is not None else 0
             pvMeterGridPf = pvMeterGridPf if pvMeterGridPf is not None else 0
 
-            # Check if both pvGeneration and pvLoad are valid
-            if pvGeneration is not None and pvLoad is not None:
-                 pvImport = pvGeneration - pvLoad
-                 pvExport = pvLoad - pvGeneration
+            if pvLoad != 0:
+                pvLoad = pvLoad * -1
+
+            if pvGrid > 0:
+                pvExport = 0 
+                pvImport = pvGrid
             else:
-                 pvImport = 0
-                 pvExport = 0
+                pvExport = pvGrid * -1 
+                pvImport = 0
 
             # Generate MQTT payload
             device_id = 1  # Assuming device_id is 1
@@ -102,6 +111,9 @@ def main(interval_seconds):
             print("An error occurred:")
             print(str(e))
             traceback.print_exc()
+
+        # Trigger the watchdog
+        notifier.notify("WATCHDOG=1")
 
 if __name__ == "__main__":
     interval_seconds = 5
